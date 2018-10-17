@@ -1,12 +1,10 @@
+
 console.log('this is loaded');
 
-var spotify = {
+var keys = {
   id: process.env.SPOTIFY_ID,
   secret: process.env.SPOTIFY_SECRET
 }
 
-module.exports = spotify;
-  
-
-
+module.exports = keys;
 

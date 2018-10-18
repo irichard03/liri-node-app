@@ -20,5 +20,5 @@ var spotify = new Spotify({
       return console.log('Error occurred: ' + err);
     }
    
-  console.log(data[0]); 
+  console.log(data.tracks); 
   });

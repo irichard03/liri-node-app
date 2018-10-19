@@ -5,17 +5,18 @@ require('dotenv').config();
 const keys = require('./key');
 
 //include spotify
-var Spotify = require('node-spotify-api');
+const Spotify = require('node-spotify-api');
 
-var spotify = new Spotify({
-  id: keys.spotID,
-  secret: keys.spotSECRET
+//this makes me sad.
+const spotify = new Spotify({
+  id: keys.myKeys.spotID,
+  secret: keys.myKeys.spotSECRET
 });
  
 spotify
   .search({ type: 'track', query: 'All the Small Things' })
   .then(function(response) {
-    ///console.log(response.tracks);
+    console.log(response.tracks);
   })
   .catch(function(err) {
     console.log(err);
@@ -30,7 +31,7 @@ const moment = require('moment');
 
 //OMDB url
 const film = "Sneakers";
-const omdbURL = "http://www.omdbapi.com/?t=" + film + "&apikey=" + keys.omdbKEY;
+const omdbURL = "http://www.omdbapi.com/?t=" + film + "&apikey=" + keys.myKeys.omdbKEY;
 
 
 

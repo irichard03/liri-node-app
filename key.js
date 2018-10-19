@@ -1,10 +1,11 @@
 
 console.log('this is loaded');
 
-var keys = {
-  id: process.env.SPOTIFY_ID,
-  secret: process.env.SPOTIFY_SECRET
+var myKeys = {
+  spotID: process.env.SPOTIFY_ID,
+  spotSECRET: process.env.SPOTIFY_SECRET,
+  omdbKEY: process.env.OMDB_KEY
 }
 
-module.exports = keys;
+module.exports = myKeys;
 

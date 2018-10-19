@@ -1,6 +1,5 @@
 //import modules
-require("dotenv").config(); //what does this do?
-var keys = require('./key.js');
+require("dotenv").config();
 var Spotify = require('node-spotify-api');
 
 //assign process argument values to an array.
@@ -11,14 +10,16 @@ process.argv.forEach(element => {
 
 // create spotify object, with the Key from the .environment file
 var spotify = new Spotify({
-    id: keys.id,
-    secret: keys.secret
-  });
+  id: process.env.SPOTIFY_ID,
+  secret: process.env.SPOTIFY_SECRET
+});
 
-  spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-    if (err) {
-      return console.log('Error occurred: ' + err);
-    }
-   
-  console.log(data.tracks); 
+
+spotify
+  .search({ type: 'track', query: 'All the Small Things' })
+  .then(function(response) {
+    console.log(response);
+  })
+  .catch(function(err) {
+    console.log(err);
   });

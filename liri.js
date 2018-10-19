@@ -7,6 +7,20 @@ const keys = require('./key');
 //include spotify
 var Spotify = require('node-spotify-api');
 
+var spotify = new Spotify({
+  id: keys.spotID,
+  secret: keys.spotSECRET
+});
+ 
+spotify
+  .search({ type: 'track', query: 'All the Small Things' })
+  .then(function(response) {
+    ///console.log(response.tracks);
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
+
 
 //include request module
 const request = require('request');
@@ -15,18 +29,21 @@ const request = require('request');
 const moment = require('moment');
 
 //OMDB url
-const film;
+const film = "Sneakers";
 const omdbURL = "http://www.omdbapi.com/?t=" + film + "&apikey=" + keys.omdbKEY;
 
 
 
 
+/**
+ *  EXECUTION CODE
+ * 
+ */
 
-cliStart();
+startCLI();
 
-
-
-function cliStart(){
+//Function for taking in arguments and executing various api calls.
+function startCLI(){
   const parameterArray = [];
   process.argv.forEach(element => {
       parameterArray.push(element);
@@ -38,4 +55,7 @@ function cliStart(){
   console.log(command);
   console.log(arg1);
   console.log(arg2);
+  console.log(keys.omdbKEY);
+  console.log(keys.spotID);
+  console.log(keys.spotSECRET);
 }

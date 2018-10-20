@@ -13,14 +13,18 @@ const spotify = new Spotify({
   secret: keys.myKeys.spotSECRET
 });
  
-spotify
-  .search({ type: 'track', query: 'All the Small Things' })
+function getSpotify(argument){
+  spotify
+  .search({ type: 'track', query: argument})
   .then(function(response) {
+    console.log("Okay, here's what I found:\n")
     console.log(response.tracks);
   })
   .catch(function(err) {
     console.log(err);
   });
+
+}
 
 
 //include request module
@@ -51,12 +55,26 @@ function startCLI(){
   });
 
   const command = parameterArray[2];
-  const arg1 = parameterArray[3];
-  const arg2 = parameterArray[4];
+  const argument = parameterArray[3];
+  
+  getCommand(command,argument);
+  
+  /** Debugging stuff
   console.log(command);
   console.log(arg1);
   console.log(arg2);
   console.log(keys.omdbKEY);
   console.log(keys.spotID);
   console.log(keys.spotSECRET);
+   */
+}
+
+function getCommand(command,argument){
+  switch(command){
+    case 'spotify-this-song':
+    getSpotify(argument);
+    break;
+    default :
+    console.log("I'm sorry, that's not a command I recognize, try running one of the following commands:\n****\nspotify-this-song [track you'd like to listen to]\ne.g. spotify-this-song All the Small Things\n****\nconcert-this [bandname]\ne.g. concert-this Metallica\n****\nmovie-this [movie]\ne.g movie-this Robocop\n***\ndo-what-it-says\nThis will read from the random.txt");
+  }
 }

@@ -15,10 +15,13 @@ const spotify = new Spotify({
  
 function getSpotify(argument){
   spotify
-  .search({ type: 'track', query: argument})
+  .search({ type: 'track', query: argument, limit: 1})
   .then(function(response) {
-    console.log("Okay, here's what I found:\n")
-    console.log(response.tracks);
+    console.log("Okay, here's what I found:\n");
+    console.log(response.tracks.items[0].album.artists[0].name)
+    console.log(response.tracks.items[0].name);
+    console.log(response.tracks.items[0].album.name);
+    console.log(response.tracks.items[0].preview_url);
   })
   .catch(function(err) {
     console.log(err);

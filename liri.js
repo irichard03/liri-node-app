@@ -1,11 +1,11 @@
 //include dotenv use process.env + .env variable.
 require('dotenv').config();
 
+//prevents infinite loops on spotify songs that aren't found.
 let loopPrevent = 0;
+
 //get info about objects
 const util = require('util');
-
-const comma = ',';
 
 //include my keys
 const keys = require('./key');
@@ -35,7 +35,7 @@ function getSpotify(argument){
     }
     else {
       if( loopPrevent === 0) {
-        console.log("Okay, here's what I found:\n");
+        console.log("Okay, here's what I found:\n");              //wrapped in if because verbiage is awkward if i'm serving default song Ace of Bass.
       }
       console.log(response.tracks.items[0].album.artists[0].name)
       console.log(response.tracks.items[0].name);
@@ -68,26 +68,41 @@ function getBands(argument){
       concertDate = moment(concertDate).format('LLLL');
       console.log("It looks like " + argument + " is playing at the " + concert + " on " + concertDate + " ." );
       console.log("\n you can get tickets at " + ticketsUrl + " ."); 
-      //console.log(util.inspect(JSON.parse(body)[0], false, null, true /* enable colors */))
+      //console.log(util.inspect(JSON.parse(body)[0], false, null, true /* enable colors */))   I had a hard time determining notation from documentation, this didn't really help.
     }
   });
 }
 
-//OMDB url
-const film = "Sneakers";
-const omdbURL = "http://www.omdbapi.com/?t=" + film + "&apikey=" + keys.myKeys.omdbKEY;
+//Call the OMDB url
+function getMovie(argument){
+  let omdbURL = "http://www.omdbapi.com/?t=" + argument + "&apikey=" + keys.myKeys.omdbKEY;
+  request(omdbURL, function (error, response, body) {
+    if(error){
+      console.log("I'm sorry, I couldn't find anything.");
+      console.log('error:', error); // Print the error if one occurred
+      console.log("statusCode: " , response && respnse.statusCode);
+    }
+    else {
+    
+      //console.log( util.inspect(JSON.parse(body), false, null, true /* enable colors */ ))
+      console.log("Film: " + JSON.parse( body ).Title );
+      console.log("Writer(s): " + JSON.parse( body ).Writer );
+      console.log("Released: " + JSON.parse( body ).Released );
+      console.log("IMDB Rating: " + JSON.parse( body ).Ratings[0] );
+      console.log("Rotten Tomatoes Rating: " + JSON.parse( body ).Ratings[1] );
+      console.log("Produced in: " + JSON.parse( body ).Country );
+      console.log("Language(s): " + JSON.parse( body ).Language );
+      console.log("\nPlot: " + JSON.parse( body ).Plot );
+      console.log("Starring: " + JSON.parse( body ).Actors );
+    }
+  });
+}
 
 
-
-
-/**
- *  EXECUTION CODE
- * 
- */
-
+//call main function
 startCLI();
 
-//Function for taking in arguments and executing various api calls, combines additional parameters into an array and converts to string.
+//Function to read command and one parameter, additional parameters are concatenated with the first.
 function startCLI(){
   const parameterArray = [];
   process.argv.forEach(element => {
@@ -107,23 +122,13 @@ function startCLI(){
   else{
     temp = parameterArray[3];         
   }
-  
   const argument = temp;
-
-  console.log(argument);
-
-  getCommand(command,argument);
   
-  /** Debugging stuff
-  console.log(command);
-  console.log(arg1);
-  console.log(arg2);
-  console.log(keys.omdbKEY);
-  console.log(keys.spotID);
-  console.log(keys.spotSECRET);
-   */
+  //call function to execute desired api request.
+  getCommand(command,argument);
 }
 
+//This function feeds command parameter and argument parameter into a switch case, calling the desired api function. Default lists acceptable commands.
 function getCommand(command,argument){
   switch(command){
     case 'spotify-this-song':
@@ -131,6 +136,9 @@ function getCommand(command,argument){
     break;
     case 'concert-this':
     getBands(argument);
+    break;
+    case 'movie-this':
+    getMovie(argument);
     break;
     default :
     console.log("I'm sorry, that's not a command I recognize, try running one of the following commands:\n****\nspotify-this-song [track you'd like to listen to]\ne.g. spotify-this-song All the Small Things\n****\nconcert-this [bandname]\ne.g. concert-this Metallica\n****\nmovie-this [movie]\ne.g movie-this Robocop\n***\ndo-what-it-says\nThis will read from the random.txt");

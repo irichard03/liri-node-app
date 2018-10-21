@@ -4,6 +4,9 @@ require('dotenv').config();
 //include my keys
 const keys = require('./key');
 
+//include moment module
+const moment = require('moment')
+
 //include spotify
 const Spotify = require('node-spotify-api');
 
@@ -33,8 +36,29 @@ function getSpotify(argument){
 //include request module
 const request = require('request');
 
-//include moment module
-const moment = require('moment');
+function getBands(argument){
+  let bandsURL = "https://rest.bandsintown.com/artists/" + argument + "/events?app_id=" + keys.myKeys.bandsKEY + "";
+  request(bandsURL, function (error, response, body) {
+    if(error){
+      console.log("I'm sorry, I couldn't find anything.");
+      console.log('error:', error); // Print the error if one occurred
+      console.log("statusCode: " , response && respnse.statusCode);
+    }
+    else {
+      let concert = JSON.parse(body)[0].venue.name;
+      let concertDate = JSON.parse(body)[0].datetime;
+      console.log(concert, concertDate);
+      //let date = moment(JSON.parse(body[0].datetime)).format("LLL");
+      //console.log("It looks like " + argument + " is playing at the " + JSON.parse(body)[0].venue.name + " on " + date + " ." );
+      //console.log("\n you can get tickets at " + JSON.parse(body)[0].offers.url);
+      
+    }
+  });
+}
+
+
+
+;
 
 //OMDB url
 const film = "Sneakers";
@@ -76,6 +100,9 @@ function getCommand(command,argument){
   switch(command){
     case 'spotify-this-song':
     getSpotify(argument);
+    break;
+    case 'concert-this':
+    getBands(argument);
     break;
     default :
     console.log("I'm sorry, that's not a command I recognize, try running one of the following commands:\n****\nspotify-this-song [track you'd like to listen to]\ne.g. spotify-this-song All the Small Things\n****\nconcert-this [bandname]\ne.g. concert-this Metallica\n****\nmovie-this [movie]\ne.g movie-this Robocop\n***\ndo-what-it-says\nThis will read from the random.txt");

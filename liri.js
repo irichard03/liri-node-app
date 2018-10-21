@@ -1,16 +1,22 @@
 //include dotenv use process.env + .env variable.
 require('dotenv').config();
 
+let loopPrevent = 0;
+//get info about objects
+const util = require('util');
+
+const comma = ',';
+
 //include my keys
 const keys = require('./key');
 
-//include moment module
+//include moment module for formatting date
 const moment = require('moment')
 
 //include spotify
 const Spotify = require('node-spotify-api');
 
-//this makes me sad.
+//sets spotify parameters.
 const spotify = new Spotify({
   id: keys.myKeys.spotID,
   secret: keys.myKeys.spotSECRET
@@ -18,13 +24,24 @@ const spotify = new Spotify({
  
 function getSpotify(argument){
   spotify
-  .search({ type: 'track', query: argument, limit: 1})
+  .search({ type: 'track', query: argument, limit: 20})
   .then(function(response) {
-    console.log("Okay, here's what I found:\n");
-    console.log(response.tracks.items[0].album.artists[0].name)
-    console.log(response.tracks.items[0].name);
-    console.log(response.tracks.items[0].album.name);
-    console.log(response.tracks.items[0].preview_url);
+    
+    if( response.tracks.total === 0 && loopPrevent === 0 ) {
+      console.log("Sorry I couldn't find anything. How about some Ace of Bass ?");
+      loopPrevent = 1;
+      getSpotify("Ace of Base");
+    return;
+    }
+    else {
+      if( loopPrevent === 0) {
+        console.log("Okay, here's what I found:\n");
+      }
+      console.log(response.tracks.items[0].album.artists[0].name)
+      console.log(response.tracks.items[0].name);
+      console.log(response.tracks.items[0].album.name);
+      console.log(response.tracks.items[0].preview_url);
+    }
   })
   .catch(function(err) {
     console.log(err);
@@ -47,18 +64,14 @@ function getBands(argument){
     else {
       let concert = JSON.parse(body)[0].venue.name;
       let concertDate = JSON.parse(body)[0].datetime;
-      console.log(concert, concertDate);
-      //let date = moment(JSON.parse(body[0].datetime)).format("LLL");
-      //console.log("It looks like " + argument + " is playing at the " + JSON.parse(body)[0].venue.name + " on " + date + " ." );
-      //console.log("\n you can get tickets at " + JSON.parse(body)[0].offers.url);
-      
+      let ticketsUrl = JSON.parse(body)[0].offers[0].url; 
+      concertDate = moment(concertDate).format('LLLL');
+      console.log("It looks like " + argument + " is playing at the " + concert + " on " + concertDate + " ." );
+      console.log("\n you can get tickets at " + ticketsUrl + " ."); 
+      //console.log(util.inspect(JSON.parse(body)[0], false, null, true /* enable colors */))
     }
   });
 }
-
-
-
-;
 
 //OMDB url
 const film = "Sneakers";
@@ -74,7 +87,7 @@ const omdbURL = "http://www.omdbapi.com/?t=" + film + "&apikey=" + keys.myKeys.o
 
 startCLI();
 
-//Function for taking in arguments and executing various api calls.
+//Function for taking in arguments and executing various api calls, combines additional parameters into an array and converts to string.
 function startCLI(){
   const parameterArray = [];
   process.argv.forEach(element => {
@@ -82,8 +95,23 @@ function startCLI(){
   });
 
   const command = parameterArray[2];
-  const argument = parameterArray[3];
+  let temp;
+  if (parameterArray.length > 3){
+    let convertArray = [];
+    for(let i = 3; i < parameterArray.length; i++ ){
+      convertArray.push(parameterArray[i]);
+    }  
+    temp = convertArray.toString();   //turn additional arguments into a string
+    temp = temp.replace(/,/g," ");    //scrub commas
+  }
+  else{
+    temp = parameterArray[3];         
+  }
   
+  const argument = temp;
+
+  console.log(argument);
+
   getCommand(command,argument);
   
   /** Debugging stuff

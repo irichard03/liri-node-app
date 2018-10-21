@@ -6,6 +6,7 @@ let loopPrevent = 0;
 
 //get info about objects
 const util = require('util');
+const fs = require('fs');
 
 //include my keys
 const keys = require('./key');
@@ -49,7 +50,6 @@ function getSpotify(argument){
 
 }
 
-
 //include request module
 const request = require('request');
 
@@ -75,30 +75,54 @@ function getBands(argument){
 
 //Call the OMDB url
 function getMovie(argument){
-  let omdbURL = "http://www.omdbapi.com/?t=" + argument + "&apikey=" + keys.myKeys.omdbKEY;
+  let omdbURL;
+  if(!argument){
+    omdbURL = "http://www.omdbapi.com/?t=Mr.Nobody&apikey=" + keys.myKeys.omdbKEY;
+  }
+  else{
+    omdbURL = "http://www.omdbapi.com/?t=" + argument + "&apikey=" + keys.myKeys.omdbKEY;
+  }
   request(omdbURL, function (error, response, body) {
     if(error){
       console.log("I'm sorry, I couldn't find anything.");
       console.log('error:', error); // Print the error if one occurred
-      console.log("statusCode: " , response && respnse.statusCode);
+      console.log("statusCode: " , response && respnse.statusCode );
     }
     else {
-    
-      //console.log( util.inspect(JSON.parse(body), false, null, true /* enable colors */ ))
       console.log("Film: " + JSON.parse( body ).Title );
       console.log("Writer(s): " + JSON.parse( body ).Writer );
       console.log("Released: " + JSON.parse( body ).Released );
-      console.log("IMDB Rating: " + JSON.parse( body ).Ratings[0] );
-      console.log("Rotten Tomatoes Rating: " + JSON.parse( body ).Ratings[1] );
+      console.log("IMDB Rating: " + JSON.parse( body ).Ratings[0].Value );
+      console.log("Rotten Tomatoes Rating: " + JSON.parse( body ).Ratings[1].Value );
       console.log("Produced in: " + JSON.parse( body ).Country );
       console.log("Language(s): " + JSON.parse( body ).Language );
       console.log("\nPlot: " + JSON.parse( body ).Plot );
-      console.log("Starring: " + JSON.parse( body ).Actors );
+      console.log("Starring: " + JSON.parse( body ).Actors );  
     }
   });
 }
 
+function readText(){
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    if (error) {
+      console.log("I had a problem with the instructions, see below:");
+      return console.log(error);
+    }
+    else{
+      var textArray = data.split(",");
+      getCommand(textArray[0],[textArray[1]]);
+    }
+  });
+}
 
+function writeLog(response){
+  fs.appendFile("log.txt", response, function(err) {
+    if (err) {
+      console.log("I'm having trouble with the logs, see below:");
+      return console.log(err);
+    }
+  });
+}
 //call main function
 startCLI();
 
@@ -139,6 +163,9 @@ function getCommand(command,argument){
     break;
     case 'movie-this':
     getMovie(argument);
+    break;
+    case 'do-what-it-says':
+    readText();
     break;
     default :
     console.log("I'm sorry, that's not a command I recognize, try running one of the following commands:\n****\nspotify-this-song [track you'd like to listen to]\ne.g. spotify-this-song All the Small Things\n****\nconcert-this [bandname]\ne.g. concert-this Metallica\n****\nmovie-this [movie]\ne.g movie-this Robocop\n***\ndo-what-it-says\nThis will read from the random.txt");

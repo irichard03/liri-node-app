@@ -1,28 +1,18 @@
 
-Command: concert-this
-Parameter:primus
-Command: concert-this
-Parameter:metallica
-***Bands In Town Api Call***
-
-Command: concert-this
-Parameter:Iron Maiden
-Command: concert-this
-Parameter:Pearl Jam
-Command: concert-this
-Parameter:guns and roses
-***Bands In Town Api Call***
-
-Command: movie-this
-Parameter:die hard
-***Movies Api Call***
-
-Command: movie-this
-Parameter:star trek
-***Movies Api Call***
-
 Command: do-what-it-says
 Parameter: Read from Text
 Command: spotify-this-song
 Parameter:I Want it That Way
 ***Spotify Api Call***
+
+Command: spotify-this-song
+Parameter:message in blood
+***Spotify Api Call***
+
+Command: movie-this
+Parameter:Star Trek
+***Movies Api Call***
+
+Command: concert-this
+Parameter:Metallica
+***Bands In Town Api Call***
